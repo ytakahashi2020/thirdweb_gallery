@@ -1,53 +1,42 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
+import { useContract, useNFTs } from "@thirdweb-dev/react";
+import { NFT_CONTRACT_ADDRESS } from "../const/addresses";
+import { NFTCard } from "../components/NFTCard";
+import { useState } from "react"
+
 
 const Home: NextPage = () => {
+  const count = 30;
+
+  const [page, setPage] = useState(1);
+
+  const { contract } = useContract(NFT_CONTRACT_ADDRESS);
+  const { data: nfts, isLoading: isLoadingNFTs } = useNFTs(
+    contract,
+    {
+      count: count,
+      start: (page - 1) * count
+    }
+  )
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="http://thirdweb.com/">thirdweb</a>!
-        </h1>
-
-        <p className={styles.description}>
-          Get started by configuring your desired network in{" "}
-          <code className={styles.code}>pages/_app.tsx</code>, then modify the{" "}
-          <code className={styles.code}>pages/index.tsx</code> file!
-        </p>
-
-        <div className={styles.connect}>
-          <ConnectWallet />
-        </div>
-
-        <div className={styles.grid}>
-          <a href="https://portal.thirdweb.com/" className={styles.card}>
-            <h2>Portal &rarr;</h2>
-            <p>
-              Guides, references and resources that will help you build with
-              thirdweb.
-            </p>
-          </a>
-
-          <a href="https://thirdweb.com/dashboard" className={styles.card}>
-            <h2>Dashboard &rarr;</h2>
-            <p>
-              Deploy, configure and manage your smart contracts from the
-              dashboard.
-            </p>
-          </a>
-
-          <a
-            href="https://portal.thirdweb.com/templates"
-            className={styles.card}
-          >
-            <h2>Templates &rarr;</h2>
-            <p>
-              Discover and clone template projects showcasing thirdweb features.
-            </p>
-          </a>
-        </div>
-      </main>
+      <div className={styles.NFTGrid}>
+      {!isLoadingNFTs && (
+        nfts?.map((nft, index) => (
+          <NFTCard key={index} nft={nft} />
+        ) 
+      ))}
+      </div>
+      <div className={styles.pagnation}>
+        <button onClick={() => setPage(page - 1)} disabled={page===1}>Previous</button>
+        <input 
+          type="number"
+          value={page}
+          onChange={(e) => setPage(parseInt(e.target.value))}
+        />
+        <button onClick={() => setPage(page + 1)}>Next</button>
+      </div>
     </div>
   );
 };
