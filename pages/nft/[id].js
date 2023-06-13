@@ -39,7 +39,7 @@ const NFTDtailPage = () => {
       )}
       <div>
         <h3>Traits:</h3>
-        {nft?.metadata.attributes.map((attribute, index) => (
+        {nft?.metadata.attributes?.map((attribute, index) => (
           <div key={index}>
             <strong>{attribute.trait_type}: </strong>
             {attribute.value}
@@ -50,7 +50,7 @@ const NFTDtailPage = () => {
         <h3>History:</h3>
         {!isLoadingEvents && (
           <div>
-            {events.map((event, index) => (
+            {events?.map((event, index) => (
               <div key={index}>
                 <strong>From: </strong>
                 {event.data.from}
